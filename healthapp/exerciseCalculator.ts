@@ -1,3 +1,5 @@
+import isNotNumber from "./utils.ts";
+
 interface Result {
   periodLength: number;
   trainingDays: number;
@@ -8,27 +10,28 @@ interface Result {
   average: number;
 }
 
-const parseNumbers = (values: number[]): number[] => {
-  if (values.length < 7) throw new Error("Not enough arguments");
-  if (values.length > 7) throw new Error("Too many arguments");
+const parseNumbers = (args: string[]): number[] => {
+  if (args.length < 3) throw new Error("Not enough arguments");
 
-  let weekValues: number[] = [];
+  let routineValues: number[] = [];
 
-  values.forEach((value) => {
-    if (!isNaN(Number(value))) {
-      weekValues.push(value);
+  // Omit function name & start from the actual arguments
+  for (let i = 2; i < args.length; i++) {
+    if (!isNotNumber(args[i])) {
+      routineValues.push(Number(args[i]));
     } else {
       throw new Error("Provided values were not numbers!");
     }
-  });
+  }
 
-  return weekValues;
+  return routineValues;
 };
 
-const calculateExercises = (
-  exercises: number[],
-  targetHours: number,
-): Result => {
+const calculateExercises = (args: number[]) => {
+  // Separating target & routine arguments
+  const exercises = [...args];
+  const targetHours = exercises.shift() ?? 0;
+
   const periodLength = exercises.length;
   const trainingDays = exercises.filter((d) => d > 0).length;
   let totalHours = 0;
@@ -53,7 +56,7 @@ const calculateExercises = (
     ratingDescription = "Excelent, you are awesome!";
   }
 
-  return {
+  const resultObject = {
     periodLength: periodLength,
     trainingDays: trainingDays,
     success: success,
@@ -62,15 +65,13 @@ const calculateExercises = (
     target: targetHours,
     average: totalHours / periodLength,
   };
+
+  console.log(resultObject);
 };
 
 try {
-  const week1Exercises = parseNumbers([3, 0, 2, 4.5, 0, 3, 1]);
-  const week2Exercises = parseNumbers([3, 2, 2, 2, 1, 3, 1]);
-  const week3Exercises = parseNumbers([3, 0, 2, 2, 3, 3, 3]);
-  console.log(calculateExercises(week1Exercises, 2));
-  console.log(calculateExercises(week2Exercises, 2));
-  console.log(calculateExercises(week3Exercises, 2));
+  const exercises = parseNumbers(process.argv);
+  calculateExercises(exercises);
 } catch (error: unknown) {
   let errorMessage = "Something went wrong: ";
   if (error instanceof Error) {

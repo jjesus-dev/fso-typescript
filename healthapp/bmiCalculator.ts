@@ -19,7 +19,7 @@ const parseArguments = (args: string[]): BodyValues => {
   }
 };
 
-const calculateBmi = (h: number, w: number) => {
+const calculateBmi = (h: number, w: number): string => {
   // converting cm to m
   const cmH = h / 100;
   const bmi = w / (cmH * cmH);
@@ -36,16 +36,21 @@ const calculateBmi = (h: number, w: number) => {
   else if (bmi >= 40) result = "Obese (Class III)";
   else throw new Error(`Can't calculate your BMI!`);
 
-  console.log(result);
+  return result;
 };
 
-try {
-  const { height, weight } = parseArguments(process.argv);
-  calculateBmi(height, weight);
-} catch (error: unknown) {
-  let errorMessage = "Something went wrong: ";
-  if (error instanceof Error) {
-    errorMessage += error.message;
+// Don't run if module is imported
+if (process.argv[1] === import.meta.filename) {
+  try {
+    const { height, weight } = parseArguments(process.argv);
+    console.log(calculateBmi(height, weight));
+  } catch (error: unknown) {
+    let errorMessage = "Something went wrong: ";
+    if (error instanceof Error) {
+      errorMessage += error.message;
+    }
+    console.log(errorMessage);
   }
-  console.log(errorMessage);
 }
+
+export default calculateBmi;

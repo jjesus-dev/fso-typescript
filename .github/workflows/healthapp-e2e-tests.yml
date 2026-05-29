@@ -36,20 +36,11 @@ jobs:
         working-directory: ./healthapp-tests
         run: npm install
 
-      # `--with-deps` Takes too long with github actions, using minimal dependencies
+      # `--with-deps` Takes too long with github actions, using docker image instead
       - name: Install Playwright browsers
-        working-directory: ./healthapp-tests
-        run: |
-          npx playwright install chromium
-          sudo apt-get update
-          sudo apt-get install -y \
-            libnss3 \
-            libatk-bridge2.0-0 \
-            libdrm2 \
-            libxcomposite1 \
-            libxdamage1 \
-            libxrandr2 \
-            libgbm1
+        uses: docker://mcr.microsoft.com/playwright:v1.44.0-jammy
+        with:
+          args: bash -c "cd /healthapp-tests && npx playwright test"
 
       - name: Run e2e tests
         working-directory: ./healthapp-tests

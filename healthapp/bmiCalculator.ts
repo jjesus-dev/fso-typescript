@@ -1,4 +1,4 @@
-import isNotNumber from "./utils.ts";
+import { isNotNumber } from "./utils.ts";
 
 interface BodyValues {
   height: number;
@@ -34,7 +34,8 @@ const calculateBmi = (h: number, w: number): string => {
   else if (bmi >= 30 && bmi < 35) result = "Obese (Class I)";
   else if (bmi >= 35 && bmi < 40) result = "Obese (Class II)";
   else if (bmi >= 40) result = "Obese (Class III)";
-  else throw new Error(`Can't calculate your BMI!`);
+  else result = "Can't calculate your BMI!";
+  //else throw new Error(`Can't calculate your BMI!`);
 
   return result;
 };

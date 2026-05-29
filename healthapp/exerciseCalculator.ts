@@ -1,4 +1,4 @@
-import isNotNumber from "./utils.ts";
+import { parseNumbers } from "./utils.ts";
 
 interface Result {
   periodLength: number;
@@ -10,28 +10,10 @@ interface Result {
   average: number;
 }
 
-const parseNumbers = (args: string[]): number[] => {
-  if (args.length < 3) throw new Error("Not enough arguments");
-
-  const routineValues: number[] = [];
-
-  // Omit function name & start from the actual arguments
-  for (let i = 2; i < args.length; i++) {
-    if (!isNotNumber(args[i])) {
-      routineValues.push(Number(args[i]));
-    } else {
-      throw new Error("Provided values were not numbers!");
-    }
-  }
-
-  return routineValues;
-};
-
-const calculateExercises = (args: number[]) => {
-  // Separating target & routine arguments
-  const exercises = [...args];
-  const targetHours = exercises.shift() ?? 0;
-
+const calculateExercises = (
+  targetHours: number,
+  exercises: number[],
+): Result => {
   const periodLength = exercises.length;
   const trainingDays = exercises.filter((d) => d > 0).length;
   let totalHours = 0;
@@ -66,16 +48,24 @@ const calculateExercises = (args: number[]) => {
     average: totalHours / periodLength,
   };
 
-  console.log(resultObject);
+  return resultObject;
 };
 
-try {
-  const exercises = parseNumbers(process.argv);
-  calculateExercises(exercises);
-} catch (error: unknown) {
-  let errorMessage = "Something went wrong: ";
-  if (error instanceof Error) {
-    errorMessage += error.message;
+// Don't run if module is imported
+if (process.argv[1] === import.meta.filename) {
+  try {
+    // Separating target & routine arguments
+    const exercises = parseNumbers(process.argv);
+    const target = exercises.shift() ?? 0;
+
+    console.log(calculateExercises(target, exercises));
+  } catch (error: unknown) {
+    let errorMessage = "Something went wrong: ";
+    if (error instanceof Error) {
+      errorMessage += error.message;
+    }
+    console.log(errorMessage);
   }
-  console.log(errorMessage);
 }
+
+export default calculateExercises;

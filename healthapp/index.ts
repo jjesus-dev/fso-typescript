@@ -13,7 +13,7 @@ app.get("/hello", (_req, res) => {
 app.get("/bmi", (req, res) => {
   const height = Number(req.query.height);
   const weight = Number(req.query.weight);
-  let bmi = "";
+  let bmi: string;
 
   if (isNotNumber(height) || isNotNumber(weight)) {
     res.json({ error: "malformatted parameters" });

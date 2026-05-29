@@ -24,7 +24,7 @@ const calculateBmi = (h: number, w: number): string => {
   const cmH = h / 100;
   const bmi = w / (cmH * cmH);
 
-  let result = "";
+  let result: string;
 
   if (bmi < 16) result = "Underweight (Severe thinness)";
   else if (bmi >= 16 && bmi < 17.0) result = "Underweight (Moderate thinness)";

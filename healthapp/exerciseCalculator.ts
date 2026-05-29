@@ -13,7 +13,7 @@ interface Result {
 const parseNumbers = (args: string[]): number[] => {
   if (args.length < 3) throw new Error("Not enough arguments");
 
-  let routineValues: number[] = [];
+  const routineValues: number[] = [];
 
   // Omit function name & start from the actual arguments
   for (let i = 2; i < args.length; i++) {
@@ -35,8 +35,8 @@ const calculateExercises = (args: number[]) => {
   const periodLength = exercises.length;
   const trainingDays = exercises.filter((d) => d > 0).length;
   let totalHours = 0;
-  let rating = 1;
-  let ratingDescription = "";
+  let rating: number;
+  let ratingDescription: string;
 
   exercises.forEach((v) => {
     totalHours += v;
@@ -56,7 +56,7 @@ const calculateExercises = (args: number[]) => {
     ratingDescription = "Excelent, you are awesome!";
   }
 
-  const resultObject = {
+  const resultObject: Result = {
     periodLength: periodLength,
     trainingDays: trainingDays,
     success: success,

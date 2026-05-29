@@ -1,8 +1,10 @@
 import express from "express";
-import isNotNumber from "./utils.ts";
+import { isNotNumber, parseNumbers } from "./utils.ts";
 import calculateBmi from "./bmiCalculator.ts";
+import calculateExercises from "./exerciseCalculator.ts";
 const app = express();
 const PORT = 3000;
+app.use(express.json());
 
 app.set("query parser", "extended");
 
@@ -22,6 +24,32 @@ app.get("/bmi", (req, res) => {
 
     res.json({ height, weight, bmi });
   }
+});
+
+app.post("/exercises", (req, res) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { daily_exercises, target } = req.body;
+
+  let exercises: number[] = [];
+
+  if (!daily_exercises || !target) {
+    return res.status(400).json({ error: "parameters missing" });
+  } else {
+    if (isNotNumber(target)) {
+      return res.status(400).json({ error: "malformatted parameters" });
+    }
+
+    try {
+      exercises = parseNumbers(daily_exercises);
+    } catch (error: unknown) {
+      const errorMessage = "malformatted parameters";
+      if (error instanceof Error) {
+        return res.status(400).json({ error: errorMessage });
+      }
+    }
+  }
+
+  return res.json(calculateExercises(Number(target), exercises));
 });
 
 app.listen(PORT, () => {

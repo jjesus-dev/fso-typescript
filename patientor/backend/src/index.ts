@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import diaryRouter from "./routes/diaries.ts";
+import diagnosisRouter from "./routes/diagnoses.ts";
 
 const app = express();
 app.use(cors());
@@ -13,7 +13,7 @@ app.get("/api/ping", (_req, res) => {
   res.json({ message: "pong!" });
 });
 
-app.use("/api/diaries", diaryRouter);
+app.use("/api/diagnoses", diagnosisRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

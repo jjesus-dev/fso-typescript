@@ -9,4 +9,14 @@ router.get("/", (_req, res: Response<NonSensitivePatientEntry[]>) => {
   res.send(data);
 });
 
+router.get("/:id", (req, res: Response<NonSensitivePatientEntry>) => {
+  const patient = patientsService.findById(req.params.id);
+
+  if (patient) {
+    res.send(patient);
+  } else {
+    res.sendStatus(404);
+  }
+});
+
 export default router;

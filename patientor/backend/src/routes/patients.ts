@@ -1,6 +1,7 @@
 import express, { type Response } from "express";
 import patientsService from "../services/patientsService.ts";
 import type { NonSensitivePatientEntry } from "../types.ts";
+import parseNewPatientEntry from "../utils.ts";
 
 const router: express.Router = express.Router();
 
@@ -20,16 +21,18 @@ router.get("/:id", (req, res: Response<NonSensitivePatientEntry>) => {
 });
 
 router.post("/", (req, res) => {
-  /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-  const { name, dateOfBirth, ssn, gender, occupation } = req.body;
-  const addedPatient = patientsService.addPatient({
-    name,
-    dateOfBirth,
-    ssn,
-    gender,
-    occupation,
-  });
-  res.json(addedPatient);
+  try {
+    const newPatientEntry = parseNewPatientEntry(req.body);
+    const addedPatient = patientsService.addPatient(newPatientEntry);
+    res.json(addedPatient);
+  } catch (error: unknown) {
+    let errorMessage = "Something went wrong!";
+    if (error instanceof Error) {
+      errorMessage += " Error: " + error.message;
+    }
+
+    res.status(404).send(errorMessage);
+  }
 });
 
 export default router;

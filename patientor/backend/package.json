@@ -16,13 +16,6 @@
   ],
   "author": "Javier J. Martínez M.",
   "license": "ISC",
-  "devEngines": {
-    "packageManager": {
-      "name": "pnpm",
-      "version": "^11.1.2",
-      "onFail": "download"
-    }
-  },
   "type": "module",
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -1,15 +1,11 @@
-export interface CoursePart {
-  name: string;
-  exerciseCount: number;
-}
+import { type CoursePart } from "../types";
+import Part from "./Part";
 
 const Content = ({ parts }: { parts: CoursePart[] }) => {
   return (
     <>
       {parts.map((part, index) => (
-        <p key={index}>
-          {part.name} {part.exerciseCount}
-        </p>
+        <Part part={part} key={index} />
       ))}
     </>
   );

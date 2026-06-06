@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import diaryService from "./services/diaryService";
 import type { Diary } from "./types";
+import Notification from "./components/Notifications";
 
 const App = () => {
   const [diaries, setDiaries] = useState<Diary[]>([]);
   const [date, setDate] = useState<string>("");
   const [weather, setWeather] = useState<string>("");
   const [visibility, setVisibility] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     diaryService.getAll().then((initialDiaries) => setDiaries(initialDiaries));
@@ -19,15 +21,24 @@ const App = () => {
       .create({ date: date, weather: weather, visibility: visibility })
       .then((returnedDiary) => {
         setDiaries(diaries.concat(returnedDiary));
+        setDate("");
+        setWeather("");
+        setVisibility("");
+      })
+      .catch((error) => {
+        //console.log(error);
+        setErrorMessage(error.data);
+
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
       });
-    setDate("");
-    setWeather("");
-    setVisibility("");
   };
 
   return (
     <>
       <h2>Flight diaries app</h2>
+      <Notification message={errorMessage} />
 
       <h2>Create new Diary</h2>
       <form onSubmit={diaryCreation}>

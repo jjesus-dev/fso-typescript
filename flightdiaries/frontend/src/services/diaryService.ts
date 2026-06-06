@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Diary } from "../types";
+import type { Diary, NewDiary } from "../types";
 
 const getAll = async () => {
   return await axios
@@ -7,4 +7,11 @@ const getAll = async () => {
     .then((response) => response.data);
 };
 
-export default { getAll };
+const create = async (object: NewDiary): Promise<Diary> => {
+  console.log("new diary:", object);
+  return await axios
+    .post<Diary>("/api/diaries", object)
+    .then((response) => response.data);
+};
+
+export default { getAll, create };

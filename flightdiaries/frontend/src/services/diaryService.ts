@@ -16,7 +16,7 @@ const getAll = async (): Promise<Diary[]> => {
 };
 
 const create = async (object: NewDiary): Promise<Diary> => {
-  //console.log("new diary:", object);
+  console.log("new diary:", object);
   return await axios
     .post<Diary>("/api/diaries", object)
     .then((response) => response.data)

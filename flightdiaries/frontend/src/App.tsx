@@ -6,8 +6,8 @@ import Notification from "./components/Notifications";
 const App = () => {
   const [diaries, setDiaries] = useState<Diary[]>([]);
   const [date, setDate] = useState<string>("");
-  const [weather, setWeather] = useState<string>("");
-  const [visibility, setVisibility] = useState<string>("");
+  const [weather, setWeather] = useState<string>("sunny");
+  const [visibility, setVisibility] = useState<string>("great");
   const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
@@ -22,8 +22,6 @@ const App = () => {
       .then((returnedDiary) => {
         setDiaries(diaries.concat(returnedDiary));
         setDate("");
-        setWeather("");
-        setVisibility("");
       })
       .catch((error) => {
         //console.log(error);
@@ -45,7 +43,9 @@ const App = () => {
         <div>
           <label>Date:</label>
           <input
-            type="text"
+            type="date"
+            min="2000-01-01"
+            required
             value={date}
             onChange={(e) => setDate(e.target.value)}
           />
@@ -53,27 +53,87 @@ const App = () => {
         <div>
           <label>Weather:</label>
           <input
-            type="text"
-            value={weather}
+            type="radio"
+            name="weather"
+            value="sunny"
+            onChange={(e) => setWeather(e.target.value)}
+            defaultChecked
+          />
+          Sunny
+          <input
+            type="radio"
+            name="weather"
+            value="rainy"
             onChange={(e) => setWeather(e.target.value)}
           />
+          Rainy
+          <input
+            type="radio"
+            name="weather"
+            value="cloudy"
+            onChange={(e) => setWeather(e.target.value)}
+          />
+          Cloudy
+          <input
+            type="radio"
+            name="weather"
+            value="stormy"
+            onChange={(e) => setWeather(e.target.value)}
+          />
+          Stormy
+          <input
+            type="radio"
+            name="weather"
+            value="windy"
+            onChange={(e) => setWeather(e.target.value)}
+          />
+          Windy
         </div>
         <div>
           <label>Visibility:</label>
           <input
-            type="text"
-            value={visibility}
+            type="radio"
+            name="visibility"
+            onChange={(e) => setVisibility(e.target.value)}
+            defaultChecked
+          />
+          Great
+          <input
+            type="radio"
+            name="visibility"
+            value="good"
             onChange={(e) => setVisibility(e.target.value)}
           />
+          Good
+          <input
+            type="radio"
+            name="visibility"
+            value="ok"
+            onChange={(e) => setVisibility(e.target.value)}
+          />
+          Ok
+          <input
+            type="radio"
+            name="visibility"
+            value="poor"
+            onChange={(e) => setVisibility(e.target.value)}
+          />
+          Poor
         </div>
         <button type="submit">Create</button>
       </form>
 
-      <ul>
+      <h2>Diary entries:</h2>
+      <div>
         {diaries?.map((d, index) => (
-          <li key={index}>{d.date}</li>
+          <div key={index}>
+            <h3>{d.date}</h3>
+            <p>
+              Weather: {d.weather} - Visibility: {d.visibility}
+            </p>
+          </div>
         ))}
-      </ul>
+      </div>
     </>
   );
 };

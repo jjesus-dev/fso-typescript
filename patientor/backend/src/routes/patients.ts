@@ -3,18 +3,18 @@ import patientsService from "../services/patientsService.ts";
 import {
   type PatientEntry,
   type NewPatientEntry,
-  type NonSensitivePatientEntry,
+  type NonSensitivePatient,
 } from "../types.ts";
 import { newPatientParser, errorMiddleware } from "../middleware.ts";
 
 const router: express.Router = express.Router();
 
-router.get("/", (_req, res: Response<NonSensitivePatientEntry[]>) => {
+router.get("/", (_req, res: Response<NonSensitivePatient[]>) => {
   const data = patientsService.getNonSensitiveEntries();
   res.send(data);
 });
 
-router.get("/:id", (req, res: Response<NonSensitivePatientEntry>) => {
+router.get("/:id", (req, res: Response<NonSensitivePatient>) => {
   const patient = patientsService.findById(req.params.id);
 
   if (patient) {

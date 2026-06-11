@@ -1,12 +1,13 @@
 import { v4 as uuidv4 } from "uuid";
 import patients from "../../data/patients.ts";
 import type {
+  Patient,
   PatientEntry,
   NewPatientEntry,
   NonSensitivePatientEntry,
 } from "../types.ts";
 
-const getPatients = (): PatientEntry[] => {
+const getPatients = (): Patient[] => {
   return patients;
 };
 
@@ -20,7 +21,7 @@ const getNonSensitiveEntries = (): NonSensitivePatientEntry[] => {
   }));
 };
 
-const findById = (id: string): PatientEntry | undefined => {
+const findById = (id: string): Patient | undefined => {
   const entry = patients.find((p) => p.id === id);
   return entry;
 };

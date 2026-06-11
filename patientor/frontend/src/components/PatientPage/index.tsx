@@ -58,6 +58,22 @@ const PatientPage = ({ patientId }: Props) => {
       <p>SSN: {patient?.ssn}</p>
       <p>Occupation: {patient?.occupation}</p>
       <p>Date of Birth: {patient?.dateOfBirth}</p>
+
+      <div>
+        <h3>Entries:</h3>
+        <ul>
+          {patient?.entries.map((e) => (
+            <li key={e.id}>
+              {e.date} - <em>{e.description}</em>
+              <ul>
+                {e.diagnosisCodes?.map((dia, index) => (
+                  <li key={index}>{dia}</li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };

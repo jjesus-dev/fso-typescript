@@ -1,6 +1,7 @@
 import axios from "axios";
 import patientService from "../../services/patients";
-import { Patient } from "../../types";
+import diagnosesService from "../../services/diagnoses";
+import { DiagnosisEntry, Patient } from "../../types";
 import { useState, useEffect } from "react";
 import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
@@ -12,6 +13,7 @@ interface Props {
 
 const PatientPage = ({ patientId }: Props) => {
   const [patient, setPatient] = useState<Patient>();
+  const [diagnoses, setDiagnoses] = useState<DiagnosisEntry[]>();
 
   useEffect(() => {
     const fetchPatientInfo = async () => {
@@ -38,6 +40,32 @@ const PatientPage = ({ patientId }: Props) => {
 
     void fetchPatientInfo();
   }, [patientId]);
+
+  useEffect(() => {
+    const fetchDiagnoses = async () => {
+      try {
+        const diagnoses = await diagnosesService.getAll();
+        //console.log("diags:", diagnoses);
+        setDiagnoses(diagnoses);
+      } catch (e: unknown) {
+        if (axios.isAxiosError(e)) {
+          if (e?.response?.data && typeof e?.response?.data === "string") {
+            const message = e.response.data.replace(
+              "Something went wrong. Error: ",
+              "",
+            );
+            console.error(message);
+          } else {
+            console.log("Unrecognized axios error");
+          }
+        } else {
+          console.error("Unknown error", e);
+        }
+      }
+    };
+
+    void fetchDiagnoses();
+  }, []);
 
   const getGenderIcon = (gender: string | undefined) => {
     switch (gender) {
@@ -67,7 +95,9 @@ const PatientPage = ({ patientId }: Props) => {
               {e.date} - <em>{e.description}</em>
               <ul>
                 {e.diagnosisCodes?.map((dia, index) => (
-                  <li key={index}>{dia}</li>
+                  <li key={index}>
+                    {dia} - {diagnoses?.find((d) => d.code === dia)?.name}
+                  </li>
                 ))}
               </ul>
             </li>

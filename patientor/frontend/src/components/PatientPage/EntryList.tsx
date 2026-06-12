@@ -26,13 +26,13 @@ const EntryList = ({ entry, diagnoses }: Props) => {
   const getRatingIcon = (rating: number) => {
     switch (rating) {
       case 0:
-        return <DeviceThermostatIcon sx={{ color: "#e4572e" }} />;
-      case 1:
-        return <DeviceThermostatIcon sx={{ color: "#ffca3a" }} />;
-      case 2:
-        return <DeviceThermostatIcon sx={{ color: "#44bba4" }} />;
-      default:
         return <DeviceThermostatIcon sx={{ color: "#6a4c93" }} />;
+      case 1:
+        return <DeviceThermostatIcon sx={{ color: "#44bba4" }} />;
+      case 2:
+        return <DeviceThermostatIcon sx={{ color: "#ffca3a" }} />;
+      default:
+        return <DeviceThermostatIcon sx={{ color: "#e4572e" }} />;
     }
   };
 

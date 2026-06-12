@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import EntryList from "./EntryList";
 
 interface Props {
   patientId: string;
@@ -87,23 +88,16 @@ const PatientPage = ({ patientId }: Props) => {
       <p>Occupation: {patient?.occupation}</p>
       <p>Date of Birth: {patient?.dateOfBirth}</p>
 
-      <div>
-        <h3>Entries:</h3>
-        <ul>
-          {patient?.entries.map((e) => (
-            <li key={e.id}>
-              {e.date} - <em>{e.description}</em>
-              <ul>
-                {e.diagnosisCodes?.map((dia, index) => (
-                  <li key={index}>
-                    {dia} - {diagnoses?.find((d) => d.code === dia)?.name}
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ul>
-      </div>
+      {patient?.entries && patient.entries.length >= 1 && (
+        <div>
+          <h3>Entries:</h3>
+          <ul>
+            {patient?.entries.map((e) => (
+              <EntryList key={e.id} entry={e} diagnoses={diagnoses!} />
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };

@@ -8,35 +8,24 @@ export const Gender = {
 
 export type Gender = (typeof Gender)[keyof typeof Gender];
 
-export const NewPatientSchema = z.object({
+// Defining validation schemas
+export const DiagnosisEntrySchema = z.object({
+  code: z.string(),
   name: z.string(),
-  dateOfBirth: z.iso.date(),
-  ssn: z.string(),
-  gender: z.enum(Gender),
-  occupation: z.string(),
+  latin: z.string().optional(),
 });
 
-export type NewPatientEntry = z.infer<typeof NewPatientSchema>;
+export type DiagnosisEntry = z.infer<typeof DiagnosisEntrySchema>;
 
-export interface PatientEntry extends NewPatientEntry {
-  id: string;
-}
+export const BaseEntrySchema = z.object({
+  id: z.string(),
+  description: z.string(),
+  date: z.iso.date(),
+  specialist: z.string(),
+  diagnosisCodes: z.array(z.string()).optional(),
+});
 
-export type NonSensitivePatientEntry = Omit<PatientEntry, "ssn">;
-
-export interface DiagnosisEntry {
-  code: string;
-  name: string;
-  latin?: string;
-}
-
-interface BaseEntry {
-  id: string;
-  description: string;
-  date: string;
-  specialist: string;
-  diagnosisCodes?: Array<DiagnosisEntry["code"]>;
-}
+export type BaseEntry = z.infer<typeof BaseEntrySchema>;
 
 const HealthCheckRating = {
   Healthy: 0,
@@ -45,51 +34,77 @@ const HealthCheckRating = {
   CriticalRisk: 3,
 } as const;
 
-type HealthCheckRating =
-  (typeof HealthCheckRating)[keyof typeof HealthCheckRating];
+// Using unions to validate enum/number values
+export const HealthCheckEntrySchema = z.object({
+  ...BaseEntrySchema.shape, // extending with another schema
+  type: z.literal("HealthCheck"),
+  healthCheckRating: z.union([
+    z.literal(HealthCheckRating.Healthy),
+    z.literal(HealthCheckRating.LowRisk),
+    z.literal(HealthCheckRating.HighRisk),
+    z.literal(HealthCheckRating.CriticalRisk),
+  ]),
+});
 
-interface HealthCheckEntry extends BaseEntry {
-  type: "HealthCheck";
-  healthCheckRating: HealthCheckRating;
-}
+export type HealthCheckEntry = z.infer<typeof HealthCheckEntrySchema>;
 
-interface HospitalEntry extends BaseEntry {
-  type: "Hospital";
-  discharge?: {
-    date: string;
-    criteria: string;
-  };
-}
+export const HospitalEntrySchema = z.object({
+  ...BaseEntrySchema.shape, // extending with another schema
+  type: z.literal("Hospital"),
+  discharge: z
+    .object({
+      date: z.iso.date(),
+      criteria: z.string(),
+    })
+    .optional(),
+});
 
-interface OccupationalHealthcareEntry extends BaseEntry {
-  type: "OccupationalHealthcare";
-  employerName: string;
-  sickLeave?: {
-    startDate: string;
-    endDate: string;
-  };
-}
+export type HospitalEntry = z.infer<typeof HospitalEntrySchema>;
 
-export type Entry =
-  | HealthCheckEntry
-  | HospitalEntry
-  | OccupationalHealthcareEntry;
+export const OccupationalHealthcareEntrySchema = z.object({
+  ...BaseEntrySchema.shape, // extending with another schema
+  type: z.literal("OccupationalHealthcare"),
+  employerName: z.string(),
+  sickLeave: z
+    .object({
+      startDate: z.iso.date(),
+      endDate: z.iso.date(),
+    })
+    .optional(),
+});
 
-// Define special omit for unions
-type UnionOmit<T, K extends string | number | symbol> = T extends unknown
-  ? Omit<T, K>
-  : never;
+export type OccupationalHealthcareEntry = z.infer<
+  typeof OccupationalHealthcareEntrySchema
+>;
 
-// Define Entry without the 'id' property
-export type EntryWithoutId = UnionOmit<Entry, "id">;
+// Creating a new object/type using discriminated unions (the same as A | B)
+export const EntrySchema = z.discriminatedUnion("type", [
+  HealthCheckEntrySchema,
+  HospitalEntrySchema,
+  OccupationalHealthcareEntrySchema,
+]);
+export type Entry = z.infer<typeof EntrySchema>;
 
-export interface Patient {
+// Creating a schema without `id`
+export const NewEntrySchema = z.discriminatedUnion("type", [
+  HealthCheckEntrySchema.omit({ id: true }),
+  HospitalEntrySchema.omit({ id: true }),
+  OccupationalHealthcareEntrySchema.omit({ id: true }),
+]);
+export type NewEntry = z.infer<typeof NewEntrySchema>;
+
+export const NewPatientSchema = z.object({
+  name: z.string(),
+  dateOfBirth: z.iso.date(),
+  ssn: z.string(),
+  gender: z.enum(Gender),
+  occupation: z.string(),
+});
+
+export type NewPatient = z.infer<typeof NewPatientSchema>;
+
+export interface Patient extends NewPatient {
   id: string;
-  name: string;
-  ssn: string;
-  occupation: string;
-  gender: Gender;
-  dateOfBirth: string;
   entries: Entry[];
 }
 

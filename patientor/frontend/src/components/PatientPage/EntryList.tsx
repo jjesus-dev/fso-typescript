@@ -62,13 +62,12 @@ const EntryList = ({ entry, diagnoses }: Props) => {
       case "Hospital":
         return (
           <Box>
-            <Typography variant="body2" gutterBottom>
-              {entry.discharge && (
-                <p>
-                  Discharge: {entry.discharge.date}, {entry.discharge.criteria}
-                </p>
-              )}
-            </Typography>
+            {entry.discharge && (
+              <Typography variant="body2" gutterBottom>
+                Discharge: {entry.discharge.date}, {entry.discharge.criteria}
+              </Typography>
+            )}
+
             {entry.diagnosisCodes && <div>Diagnoses: {getDiagnoses()}</div>}
           </Box>
         );
@@ -77,13 +76,13 @@ const EntryList = ({ entry, diagnoses }: Props) => {
           <Box>
             <Typography variant="body2" gutterBottom>
               Employer: {entry.employerName}
-              {entry.sickLeave && (
-                <p>
-                  Sick Leave from: {entry.sickLeave.startDate} to:{" "}
-                  {entry.sickLeave.endDate}
-                </p>
-              )}
             </Typography>
+            {entry.sickLeave && (
+              <Typography variant="body2" gutterBottom>
+                Sick Leave from: {entry.sickLeave.startDate} to:{" "}
+                {entry.sickLeave.endDate}
+              </Typography>
+            )}
             {entry.diagnosisCodes && <div>Diagnoses: {getDiagnoses()}</div>}
           </Box>
         );

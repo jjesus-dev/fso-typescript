@@ -19,8 +19,14 @@ const HealthCheckRating = {
   CriticalRisk: 3,
 } as const;
 
-type HealthCheckRating =
+export type HealthCheckRating =
   (typeof HealthCheckRating)[keyof typeof HealthCheckRating];
+
+export enum EntryType {
+  HealthCheck = "HealthCheck",
+  Hospital = "Hospital",
+  OccupationalHealthcare = "OccupationalHealthcare",
+}
 
 interface HealthCheckEntry extends BaseEntry {
   type: "HealthCheck";
@@ -56,6 +62,7 @@ type UnionOmit<T, K extends string | number | symbol> = T extends unknown
 
 // Define Entry without the 'id' property
 export type EntryWithoutId = UnionOmit<Entry, "id">;
+export type EntryFormValues = UnionOmit<Entry, "id" | "diagnosisCodes">;
 
 export enum Gender {
   Male = "male",

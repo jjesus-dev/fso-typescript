@@ -1,6 +1,9 @@
 import { useState, SyntheticEvent } from "react";
-import { TextField, Grid, Button } from "@mui/material";
-import { EntryFormValues, HealthCheckRating } from "../../types";
+import { Grid, Button, Select, MenuItem, InputLabel } from "@mui/material";
+import { EntryFormValues, EntryType, HealthCheckRating } from "../../types";
+import HealthCheckForm from "../EntryPages/HealthCheckForm";
+import HospitalForm from "../EntryPages/HospitalForm";
+import OccupationalHealthcareForm from "../EntryPages/OccupationalHealthcareForm";
 
 interface Props {
   onCancel: () => void;
@@ -11,70 +14,141 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
   const [specialist, setSpecialist] = useState("");
-  const [healthRating, setHealthRating] = useState("");
   const [diagnosisCodes, setDiagnosisCodes] = useState("");
+  const [healthRating, setHealthRating] = useState("");
+  const [dischargeCriteria, setDischargeCriteria] = useState("");
+  const [dischargeDate, setDischargeDate] = useState("");
+  const [employerName, setEmployerName] = useState("");
+  const [sickLeaveStart, setSickLeaveStart] = useState("");
+  const [sickLeaveEnd, setSickLeaveEnd] = useState("");
+  const [entryType, setEntryType] = useState(EntryType.HealthCheck);
 
   const addEntry = (event: SyntheticEvent) => {
     const entryRating = parseInt(healthRating) as HealthCheckRating;
 
     event.preventDefault();
-    onSubmit({
-      date,
-      description,
-      specialist,
-      healthCheckRating: entryRating,
-      type: "HealthCheck",
-    });
-    console.log("Submit");
+
+    switch (entryType) {
+      case EntryType.HealthCheck:
+        console.log("Submit HealthCheck");
+        onSubmit({
+          date,
+          description,
+          specialist,
+          healthCheckRating: entryRating,
+          type: entryType,
+        });
+        break;
+      case EntryType.Hospital:
+        console.log("Submit Hospital");
+        onSubmit({
+          date,
+          description,
+          specialist,
+          discharge: {
+            criteria: dischargeCriteria,
+            date: dischargeDate,
+          },
+          type: entryType,
+        });
+        break;
+      case EntryType.OccupationalHealthcare:
+        console.log("Submit OccupationalHealthcare");
+        onSubmit({
+          date,
+          description,
+          specialist,
+          employerName,
+          sickLeave: {
+            startDate: sickLeaveStart,
+            endDate: sickLeaveEnd,
+          },
+          type: entryType,
+        });
+        break;
+    }
   };
 
   const styledMargin = {
     marginBottom: 2,
   };
 
+  const displayEntryForm = (entry: EntryType) => {
+    switch (entry) {
+      case EntryType.HealthCheck:
+        return (
+          <HealthCheckForm
+            date={date}
+            setDate={setDate}
+            description={description}
+            setDescription={setDescription}
+            specialist={specialist}
+            setSpecialist={setSpecialist}
+            healthRating={healthRating}
+            setHealthRating={setHealthRating}
+            diagnosisCodes={diagnosisCodes}
+            setDiagnosisCodes={setDiagnosisCodes}
+          />
+        );
+      case EntryType.Hospital:
+        return (
+          <HospitalForm
+            date={date}
+            setDate={setDate}
+            description={description}
+            setDescription={setDescription}
+            specialist={specialist}
+            setSpecialist={setSpecialist}
+            diagnosisCodes={diagnosisCodes}
+            setDiagnosisCodes={setDiagnosisCodes}
+            dischargeDate={dischargeDate}
+            setDischargeDate={setDischargeDate}
+            dischargeCriteria={dischargeCriteria}
+            setDischargeCriteria={setDischargeCriteria}
+          />
+        );
+      case EntryType.OccupationalHealthcare:
+        return (
+          <OccupationalHealthcareForm
+            date={date}
+            setDate={setDate}
+            description={description}
+            setDescription={setDescription}
+            specialist={specialist}
+            setSpecialist={setSpecialist}
+            diagnosisCodes={diagnosisCodes}
+            setDiagnosisCodes={setDiagnosisCodes}
+            employerName={employerName}
+            setEmployerName={setEmployerName}
+            sickLeaveStart={sickLeaveStart}
+            setSickLeaveStart={setSickLeaveStart}
+            sickLeaveEnd={sickLeaveEnd}
+            setSickLeaveEnd={setSickLeaveEnd}
+          />
+        );
+    }
+  };
+
   return (
     <div>
       <form onSubmit={addEntry}>
-        <TextField
-          required
-          label="Date"
-          placeholder="YYYY-MM-DD"
+        <InputLabel id="entry-type-label">Entry Type</InputLabel>
+        <Select
+          labelId="entry-type-label"
+          id="entry-type-select"
           fullWidth
-          value={date}
-          onChange={({ target }) => setDate(target.value)}
+          value={entryType}
+          onChange={({ target }) => setEntryType(target.value)}
           sx={styledMargin}
-        />
-        <TextField
-          required
-          label="Description"
-          fullWidth
-          value={description}
-          onChange={({ target }) => setDescription(target.value)}
-          sx={styledMargin}
-        />
-        <TextField
-          required
-          label="Specialist"
-          fullWidth
-          value={specialist}
-          onChange={({ target }) => setSpecialist(target.value)}
-          sx={styledMargin}
-        />
-        <TextField
-          required
-          label="Health Check Rating (0-3)"
-          fullWidth
-          value={healthRating}
-          onChange={({ target }) => setHealthRating(target.value)}
-          sx={styledMargin}
-        />
-        <TextField
-          label="Diagnosis Codes (comma-separated)"
-          fullWidth
-          value={diagnosisCodes}
-          onChange={({ target }) => setDiagnosisCodes(target.value)}
-          sx={styledMargin}
-        />
+        >
+          <MenuItem value={EntryType.HealthCheck}>HealthCheck</MenuItem>
+          <MenuItem value={EntryType.Hospital}>Hospital</MenuItem>
+          <MenuItem value={EntryType.OccupationalHealthcare}>
+            OccupationalHealthcare
+          </MenuItem>
+        </Select>
+
+        {displayEntryForm(entryType)}
 
         <Grid container justifyContent="space-between" sx={{ marginTop: 2 }}>
           <Button

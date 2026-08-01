@@ -6,13 +6,14 @@ export interface DiagnosisEntry {
 
 interface BaseEntry {
   id: string;
-  description: string;
   date: string;
+  description: string;
   specialist: string;
   diagnosisCodes?: Array<DiagnosisEntry["code"]>;
 }
 
-const HealthCheckRating = {
+// Export both `const` & `type` to use values & keys in forms
+export const HealthCheckRating = {
   Healthy: 0,
   LowRisk: 1,
   HighRisk: 2,
@@ -62,7 +63,7 @@ type UnionOmit<T, K extends string | number | symbol> = T extends unknown
 
 // Define Entry without the 'id' property
 export type EntryWithoutId = UnionOmit<Entry, "id">;
-export type EntryFormValues = UnionOmit<Entry, "id" | "diagnosisCodes">;
+export type EntryFormValues = UnionOmit<Entry, "id">;
 
 export enum Gender {
   Male = "male",
